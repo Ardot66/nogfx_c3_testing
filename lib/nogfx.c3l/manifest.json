@@ -1,0 +1,16 @@
+{
+  "provides": "nogfx",
+  "sources": [
+    "src/**"
+  ],
+  "targets": {
+    "linux-x64": {
+      "link-args": [],
+      "linked-libraries": []
+    },
+    "windows-x64": {
+      "link-args": [],
+      "linked-libraries": []
+    }
+  }
+}
