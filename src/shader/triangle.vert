@@ -10,7 +10,7 @@ layout(location = 0) out vec4 color;
 
 void main()
 {
-	Vertex vertex = root.vertices.values[gl_VertexIndex];
+	Vertex vertex = root.vertices.values[gl_VertexIndex + gl_InstanceIndex * 3];
 	gl_Position = vertex.position;
 	color = vertex.color;
 }
