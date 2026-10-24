@@ -29,12 +29,17 @@
   // "target": "windows-x64",
   // Targets.
   "targets": {
+    "shaders": {
+      "type": "prepare",
+      "exec": ["build_shaders.c3 src/shader"],
+      "exec-dir": "./"
+    },
     "nogfx_learning": {
       // Executable or library.
       "type": "executable",
       // Additional libraries, sources
       // and overrides of global settings here.
-    },
+    }
   },
   // Global settings.
   // CPU name, used for optimizations in the LLVM backend.
