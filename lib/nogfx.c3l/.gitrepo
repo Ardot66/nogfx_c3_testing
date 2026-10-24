@@ -6,7 +6,7 @@
 [subrepo]
 	remote = https://github.com/lerno/nogfx_c3.git
 	branch = main
-	commit = 1918580d90c6ce78018c42aaab67d0a07841af0d
+	commit = 4124c83e4fc35cba70dc077a6d0531c49485842d
 	parent = b680a1a63f64b83397b3a325563efbdc6de77a39
 	method = merge
 	cmdver = 0.4.9
