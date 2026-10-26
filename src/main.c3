@@ -261,51 +261,48 @@ fn int main()
 	timeline = device.create_timeline_semaphore()!!;
 	defer timeline.destroy();
 
-	CommandBuffer* cmd = pools[0].begin_commands()!!;
-
-	TextureDesc tex_desc = {
-		.extent = {256, 256, 1},
-		.format = RGBA8_SRGB,
-		.usage = {.sampled, .transfer_destination},
-	};
-	Texture* tex = device.create_texture(tex_desc, tex_heap, 0)!!;
-	depth_offset = (ulong)tex_desc.extent.x * tex_desc.extent.y;
-	defer tex.destroy();
-	cmd.initialize_texture(tex);
-
-	texture_descriptor_heap.write(0, tex, SAMPLED);
-	sampler_descriptor_heap.write(0, {
-		.min_filter = NEAREST,
-		.mag_filter = NEAREST,
-		.address_u = CLAMP_TO_EDGE,
-		.address_v = CLAMP_TO_EDGE,
-	});
-
 	{
+		CommandBuffer* cmd = pools[0].begin_commands()!!;
 		sz mark = gpu_mem.mark();
 		defer gpu_mem.reset(mark);
+
+		TextureDesc tex_desc = {
+			.extent = {256, 256, 1},
+			.format = RGBA8_SRGB,
+			.usage = {.sampled, .transfer_destination},
+		};
+		Texture* tex = device.create_texture(tex_desc, tex_heap, 0)!!;
+		depth_offset = (ulong)tex_desc.extent.x * tex_desc.extent.y;
+		defer tex.destroy();
+		cmd.initialize_texture(tex);
+
+		texture_descriptor_heap.write(0, tex, SAMPLED);
+		sampler_descriptor_heap.write(0, {
+			.min_filter = NEAREST,
+			.mag_filter = NEAREST,
+			.address_u = CLAMP_TO_EDGE,
+			.address_v = CLAMP_TO_EDGE,
+		});
 
 		char[] temp_image = alloc::alloc_array(&gpu_mem, char, TEXTURE.len);
 		temp_image[..] = TEXTURE[..];
 		cmd.copy_memory_to_texture({gpu_address(temp_image.ptr), temp_image.len}, tex);
+
+		cmd.end();
+		device.submit({
+			.commands = {cmd},
+			.completion = {timeline, 1},
+		});
+
+		TimelinePoint setup_done = {timeline, 1};
+		setup_done.wait();
+		timeline_start = 10;
 	}
-
-	cmd.end();
-
-	device.submit({
-		.commands = {cmd},
-		.completion = {timeline, 1},
-	});
-
-	TimelinePoint setup_done = {timeline, 1};
-	setup_done.wait();
-	timeline_start = 10;
 
 	defer depth.destroy();
 	defer depth_render_view.destroy();
 
 	view = matrix::look_at({0, 3, 5}, {}, {0, 1, 0});
-
 	win.set_repaint_callback(&draw);
 
 	bool quit = false;
@@ -326,6 +323,7 @@ fn int main()
 		}
 		draw(win, {});
 	}
+
 	device.wait_idle();
 	return 0;
 }
