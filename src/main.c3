@@ -60,23 +60,6 @@ const ushort[] CUBE_INDICES = {
 	20, 21, 22, 22, 23, 20,
 };
 
-struct Vertex
-{
-	float[<4>] position;
-	float[<4>] color;
-}
-
-struct DrawRoot
-{
-	Vertex* vertices;
-}
-
-struct FrameData
-{
-	DrawRoot root @align(16);
-	Vertex[6] vertices @align(16);
-}
-
 const uint FRAMES = 2;
 
 Device* device;
