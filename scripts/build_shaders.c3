@@ -14,7 +14,7 @@ fn int main(String[] args) {
 		path::traverse((Path)dir, fn bool?(Path path, bool is_dir, any data) {
 			if(is_dir) {
 				return false;
-			} else if(!path.ends_with(".frag") && !path.ends_with(".vert")) {
+			} else if(!path.ends_with(".frag") && !path.ends_with(".vert") && !path.ends_with(".comp")) {
 				return false;
 			}
 

@@ -1,5 +1,6 @@
 module nogfx_learning;
 
 fn void main() {
-	cube_main();
+	// cube::cube_main();
+	compute::compute_main();
 }

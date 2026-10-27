@@ -1,4 +1,4 @@
-module nogfx_learning;
+module nogfx_learning::cube;
 import std::gfx, std::io, std::time, nogfx;
 import std::math;
 import std::thread;
