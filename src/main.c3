@@ -8,47 +8,64 @@ const char[*] TRIANGLE_FRAGMENT = $embed("shader/triangle.frag.spv");
 
 alias Mat4 = Matrix4x4 {float};
 struct CubeVertex {
-	float[<4>] position;
 	float[<2>] uv;
+	uint vert;
+}
+
+struct CubeVertexPosition {
+	float[<4>] position;
 }
 
 struct CubeRoot @align(16) {
 	Mat4 transform;
 	CubeVertex* vertices;
+	CubeVertexPosition* vertex_positions;
 }
 
 const float RADIANS_PER_FRAME = 0.5f * math::PI / 180.0f;
 
+const CubeVertexPosition[] CUBE_VERTEX_POSITIONS = {
+	{ .position = { .x = -1.0f, .y = -1.0f, .z = -1.0f, .w = 1.0f }},
+	{ .position = { .x = -1.0f, .y = -1.0f, .z = 1.0f, .w = 1.0f }},
+	{ .position = { .x = -1.0f, .y = 1.0f, .z = 1.0f, .w = 1.0f }},
+	{ .position = { .x = -1.0f, .y = 1.0f, .z = -1.0f, .w = 1.0f }},
+
+	{ .position = { .x = 1.0f, .y = -1.0f, .z = -1.0f, .w = 1.0f }},
+	{ .position = { .x = 1.0f, .y = -1.0f, .z = 1.0f, .w = 1.0f }},
+	{ .position = { .x = 1.0f, .y = 1.0f, .z = 1.0f, .w = 1.0f }},
+	{ .position = { .x = 1.0f, .y = 1.0f, .z = -1.0f, .w = 1.0f }},
+};
+
 const CubeVertex[] CUBE_VERTICES = {
-	{ .position = { .x = -1.0f, .y = -1.0f, .z = -1.0f, .w = 1.0f }, .uv = { .x = 0.0f, .y = 1.0f } },
-	{ .position = { .x = -1.0f, .y = -1.0f, .z = 1.0f, .w = 1.0f }, .uv = { .x = 1.0f, .y = 1.0f } },
-	{ .position = { .x = -1.0f, .y = 1.0f, .z = 1.0f, .w = 1.0f }, .uv = { .x = 1.0f, .y = 0.0f } },
-	{ .position = { .x = -1.0f, .y = 1.0f, .z = -1.0f, .w = 1.0f }, .uv = { .x = 0.0f, .y = 0.0f } },
+	{ .uv = { .x = 0.0f, .y = 1.0f }, .vert = 0 },
+	{ .uv = { .x = 1.0f, .y = 1.0f }, .vert = 1 },
+	{ .uv = { .x = 1.0f, .y = 0.0f }, .vert = 2 },
+	{ .uv = { .x = 0.0f, .y = 0.0f } , .vert = 3 },
 
-	{ .position = { .x = -1.0f, .y = -1.0f, .z = -1.0f, .w = 1.0f }, .uv = { .x = 1.0f, .y = 1.0f } },
-	{ .position = { .x = -1.0f, .y = 1.0f, .z = -1.0f, .w = 1.0f }, .uv = { .x = 1.0f, .y = 0.0f } },
-	{ .position = { .x = 1.0f, .y = 1.0f, .z = -1.0f, .w = 1.0f }, .uv = { .x = 0.0f, .y = 0.0f } },
-	{ .position = { .x = 1.0f, .y = -1.0f, .z = -1.0f, .w = 1.0f }, .uv = { .x = 0.0f, .y = 1.0f } },
+	{ .uv = { .x = 1.0f, .y = 1.0f }, .vert = 0},
+	{ .uv = { .x = 1.0f, .y = 0.0f }, .vert = 3},
+	{ .uv = { .x = 0.0f, .y = 0.0f }, .vert = 7},
+	{ .uv = { .x = 0.0f, .y = 1.0f }, .vert = 4},
 
-	{ .position = { .x = -1.0f, .y = -1.0f, .z = -1.0f, .w = 1.0f }, .uv = { .x = 1.0f, .y = 0.0f } },
-	{ .position = { .x = 1.0f, .y = -1.0f, .z = -1.0f, .w = 1.0f }, .uv = { .x = 1.0f, .y = 1.0f } },
-	{ .position = { .x = 1.0f, .y = -1.0f, .z = 1.0f, .w = 1.0f }, .uv = { .x = 0.0f, .y = 1.0f } },
-	{ .position = { .x = -1.0f, .y = -1.0f, .z = 1.0f, .w = 1.0f }, .uv = { .x = 0.0f, .y = 0.0f } },
+	{ .uv = { .x = 1.0f, .y = 0.0f }, .vert = 0},
+	{ .uv = { .x = 1.0f, .y = 1.0f }, .vert = 4},
+	{ .uv = { .x = 0.0f, .y = 1.0f }, .vert = 5},
+	{ .uv = { .x = 0.0f, .y = 0.0f }, .vert = 1},
 
-	{ .position = { .x = -1.0f, .y = 1.0f, .z = -1.0f, .w = 1.0f }, .uv = { .x = 1.0f, .y = 0.0f } },
-	{ .position = { .x = -1.0f, .y = 1.0f, .z = 1.0f, .w = 1.0f }, .uv = { .x = 0.0f, .y = 0.0f } },
-	{ .position = { .x = 1.0f, .y = 1.0f, .z = 1.0f, .w = 1.0f }, .uv = { .x = 0.0f, .y = 1.0f } },
-	{ .position = { .x = 1.0f, .y = 1.0f, .z = -1.0f, .w = 1.0f }, .uv = { .x = 1.0f, .y = 1.0f } },
+	{ .uv = { .x = 1.0f, .y = 0.0f }, .vert = 3},
+	{ .uv = { .x = 0.0f, .y = 0.0f }, .vert = 2},
+	{ .uv = { .x = 0.0f, .y = 1.0f }, .vert = 6},
+	{ .uv = { .x = 1.0f, .y = 1.0f }, .vert = 7},
 
-	{ .position = { .x = 1.0f, .y = 1.0f, .z = -1.0f, .w = 1.0f }, .uv = { .x = 1.0f, .y = 0.0f } },
-	{ .position = { .x = 1.0f, .y = 1.0f, .z = 1.0f, .w = 1.0f }, .uv = { .x = 0.0f, .y = 0.0f } },
-	{ .position = { .x = 1.0f, .y = -1.0f, .z = 1.0f, .w = 1.0f }, .uv = { .x = 0.0f, .y = 1.0f } },
-	{ .position = { .x = 1.0f, .y = -1.0f, .z = -1.0f, .w = 1.0f }, .uv = { .x = 1.0f, .y = 1.0f } },
+	{ .uv = { .x = 1.0f, .y = 0.0f }, .vert = 7},
+	{ .uv = { .x = 0.0f, .y = 0.0f }, .vert = 6},
+	{ .uv = { .x = 0.0f, .y = 1.0f }, .vert = 5},
+	{ .uv = { .x = 1.0f, .y = 1.0f }, .vert = 4},
 
-	{ .position = { .x = -1.0f, .y = -1.0f, .z = 1.0f, .w = 1.0f }, .uv = { .x = 0.0f, .y = 1.0f } },
-	{ .position = { .x = 1.0f, .y = -1.0f, .z = 1.0f, .w = 1.0f }, .uv = { .x = 1.0f, .y = 1.0f } },
-	{ .position = { .x = 1.0f, .y = 1.0f, .z = 1.0f, .w = 1.0f }, .uv = { .x = 1.0f, .y = 0.0f } },
-	{ .position = { .x = -1.0f, .y = 1.0f, .z = 1.0f, .w = 1.0f }, .uv = { .x = 0.0f, .y = 0.0f } },
+	{ .uv = { .x = 0.0f, .y = 1.0f }, .vert = 1},
+	{ .uv = { .x = 1.0f, .y = 1.0f }, .vert = 5},
+	{ .uv = { .x = 1.0f, .y = 0.0f }, .vert = 6},
+	{ .uv = { .x = 0.0f, .y = 0.0f }, .vert = 2},
 };
 
 const ushort[] CUBE_INDICES = {
@@ -78,14 +95,16 @@ RenderView* depth_render_view;
 uint[<2>] depth_extent;
 
 Mat4 view;
-CubeVertex[] vertex_allocation;
-ushort[] index_allocation;
-CubeRoot[] roots;
+CubeVertex[] gpu_vertices;
+CubeVertexPosition[] gpu_vertex_positions;
+ushort[] gpu_indices;
+CubeRoot[] gpu_roots;
 
 TextureDescriptorHeap* texture_descriptor_heap;
 SamplerDescriptorHeap* sampler_descriptor_heap;
 
 fn void* gpu_address(void* cpu) => upload.gpu + ((char*)cpu - upload.cpu);
+fn ulong align(ulong index, ulong alignment) => ((index + alignment - 1) / alignment) * alignment;
 
 fn void draw(GfxWindow* win, GfxRect rect)
 {
@@ -116,7 +135,8 @@ fn void draw(GfxWindow* win, GfxRect rect)
 			.format = D32_FLOAT,
 			.usage = {.depth_stencil_attachment},
 		};
-		depth = device.create_texture(tex_desc, tex_heap, depth_offset)!!;
+		SizeAlign size = device.get_texture_size_align(tex_desc)!!;
+		depth = device.create_texture(tex_desc, tex_heap, align(depth_offset, size.align))!!;
 		cmd.initialize_texture(depth);
 		depth_render_view = depth.create_render_view()!!;
 		depth_extent = {target.extent.x, target.extent.y};
@@ -155,15 +175,16 @@ fn void draw(GfxWindow* win, GfxRect rect)
 	);
 	projection.m11 *= -1;
 
-	CubeRoot* root = &roots[frame % FRAMES];
-	root.vertices = gpu_address(vertex_allocation.ptr);
+	CubeRoot* root = &gpu_roots[frame % FRAMES];
+	root.vertices = gpu_address(gpu_vertices.ptr);
+	root.vertex_positions = gpu_address(gpu_vertex_positions.ptr);
 	root.transform = projection * view * matrix::IDENTITY4.rotate_y(RADIANS_PER_FRAME * (float)frame_count);
 
 	cmd.draw_indexed(
 		gpu_address(root),
-		{gpu_address(index_allocation.ptr), index_allocation.len * ushort::size},
+		{gpu_address(gpu_indices.ptr), gpu_indices.len * ushort::size},
 		UINT16,
-		index_allocation.len
+		gpu_indices.len
 	);
 
 	cmd.end_render_pass();
@@ -221,14 +242,16 @@ fn int main()
 	defer upload.destroy();
 	gpu_mem.init(upload.cpu[..upload.size]);
 
-	// frame_ranges = {alloc::alloc_array(&gpu_mem, char, 4096), alloc::alloc_array(&gpu_mem, char, 4096)};
-	vertex_allocation = alloc::alloc_array(&gpu_mem, CubeVertex, CUBE_VERTICES.len);
-	vertex_allocation[..] = CUBE_VERTICES[..];
+	gpu_vertices = alloc::alloc_array(&gpu_mem, CubeVertex, CUBE_VERTICES.len);
+	gpu_vertices[..] = CUBE_VERTICES[..];
 
-	index_allocation = alloc::alloc_array(&gpu_mem, ushort, CUBE_INDICES.len);
-	index_allocation[..] = CUBE_INDICES[..];
+	gpu_vertex_positions = alloc::alloc_array(&gpu_mem, CubeVertexPosition, CUBE_VERTEX_POSITIONS.len);
+	gpu_vertex_positions [..] = CUBE_VERTEX_POSITIONS[..];
 
-	roots = alloc::alloc_array(&gpu_mem, CubeRoot, FRAMES);
+	gpu_indices = alloc::alloc_array(&gpu_mem, ushort, CUBE_INDICES.len);
+	gpu_indices[..] = CUBE_INDICES[..];
+
+	gpu_roots = alloc::alloc_array(&gpu_mem, CubeRoot, FRAMES);
 
 	const char[] TEXTURE = $embed("lunarg_logo_256x256.rgba8");
 	texture_descriptor_heap = device.create_texture_descriptor_heap(1)!!;
@@ -254,8 +277,10 @@ fn int main()
 			.format = RGBA8_SRGB,
 			.usage = {.sampled, .transfer_destination},
 		};
+		SizeAlign size = device.get_texture_size_align(tex_desc)!!;
 		Texture* tex = device.create_texture(tex_desc, tex_heap, 0)!!;
-		depth_offset = (ulong)tex_desc.extent.x * tex_desc.extent.y;
+		depth_offset = size.size;
+
 		defer tex.destroy();
 		cmd.initialize_texture(tex);
 
