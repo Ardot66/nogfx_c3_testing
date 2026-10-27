@@ -123,7 +123,7 @@ fn void require_vk(VkResult result, String operation) @private
 
 fn void assert_vk(VkResult result) @private
 {
-	assert(result == VK_SUCCESS, "unexpected Vulkan failure");
+	assert(result == VK_SUCCESS, "unexpected Vulkan failure %s", vk_reason(result));
 }
 
 // ---- Helpers --------------------------------------------------------------------------------------------------------------------
