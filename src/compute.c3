@@ -2,7 +2,7 @@ module nogfx_learning::compute;
 import nogfx, std::thread, std::time;
 import std::io;
 
-const char[] COMPUTE_SPIRV = $embed("shader/compute.comp.spv");
+const char[] COMPUTE_SPIRV = $embed("shader/compute.spv");
 
 Device* device;
 GpuHeap upload;
@@ -54,22 +54,12 @@ fn void compute_main() {
 	defer timeline.destroy();
 
 	ulong index = 1;
-	// while(true)
 	{
 		command_pool.reset();
 		CommandBuffer* cmd = command_pool.begin_commands()!!;
 		
-		// cmd.barrier(
-		// 	(Stage){.compute}, (Access){.shader_write, .shader_read},
-		// 	(Stage){.compute}, (Access){.shader_write, .shader_read}
-		// );
-
 		cmd.bind_pso(pso);
 		cmd.dispatch(gpu_address(root), { .x = (BUF_SIZE + 63) / 64, .y = 1, .z = 1 });
-		// cmd.barrier(
-		// 	(Stage){.compute}, {},
-		// 	(Stage){.host}, (Access){.host_read}
-		// );
 
 		cmd.end();
 		TimelinePoint point = {timeline, index};
